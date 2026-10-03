@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../src/context/ThemeContext';
+import { useEcommerce } from '../../src/context/EcommerceContext';
 import { ThemedText } from '../../src/components/ThemedText';
 import { ThemedCard } from '../../src/components/ThemedCard';
 import { ThemedButton } from '../../src/components/ThemedButton';
@@ -14,6 +15,7 @@ import { SettingsSection } from '../../src/components/SettingsSection';
 import { SegmentedControl } from '../../src/components/SegmentedControl';
 import { ColorSeedPicker } from '../../src/components/ColorSeedPicker';
 import { LiveThemePreview } from '../../src/components/LiveThemePreview';
+import { RoleBadgeSwitcher } from '../../src/components/ecommerce/RoleBadgeSwitcher';
 import { FONT_FAMILY_OPTIONS, FONT_WEIGHT_OPTIONS, resolveFontFamilyAndWeight } from '../../src/constants/typography';
 import { FontSizeScale, FontWeightOption, RadiusOption, ThemeId, ThemeMode } from '../../src/types/theme';
 
@@ -40,6 +42,7 @@ export default function SettingsScreen() {
     t,
   } = useAppTheme();
 
+  const { role, setRole } = useEcommerce();
   const [showResetModal, setShowResetModal] = useState(false);
 
   // 5 Themes metadata
@@ -96,6 +99,72 @@ export default function SettingsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Marketplace Role Switcher Section */}
+        <SettingsSection
+          icon={<Ionicons name="people" size={16} color={colors.primary} />}
+          title={t('switchRoleTitle')}
+          description="Switch between Customer, Vendor, and Admin viewports"
+        >
+          <RoleBadgeSwitcher />
+
+          <View style={{ gap: 8, marginTop: 4 }}>
+            {[
+              {
+                id: 'customer' as const,
+                titleKey: 'roleCustomer',
+                descKey: 'roleCustomerDesc',
+                icon: 'cart-outline',
+              },
+              {
+                id: 'vendor' as const,
+                titleKey: 'roleVendor',
+                descKey: 'roleVendorDesc',
+                icon: 'storefront-outline',
+              },
+              {
+                id: 'admin' as const,
+                titleKey: 'roleAdmin',
+                descKey: 'roleAdminDesc',
+                icon: 'shield-checkmark-outline',
+              },
+            ].map((r) => {
+              const isSelected = role === r.id;
+              return (
+                <ThemedCard
+                  key={r.id}
+                  selected={isSelected}
+                  onPress={() => setRole(r.id)}
+                  padding="sm"
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                      <Ionicons
+                        name={r.icon as any}
+                        size={20}
+                        color={isSelected ? colors.primary : colors.textSecondary}
+                      />
+                      <View style={{ flex: 1 }}>
+                        <ThemedText variant="body" weight={isSelected ? '700' : '600'}>
+                          {t(r.titleKey as any)}
+                        </ThemedText>
+                        <ThemedText variant="caption" color="secondary">
+                          {t(r.descKey as any)}
+                        </ThemedText>
+                      </View>
+                    </View>
+
+                    <Ionicons
+                      name={isSelected ? 'checkmark-circle' : 'ellipse-outline'}
+                      size={20}
+                      color={isSelected ? colors.primary : colors.textMuted}
+                    />
+                  </View>
+                </ThemedCard>
+              );
+            })}
+          </View>
+        </SettingsSection>
+
         {/* Top: Live Interactive Preview */}
         <SettingsSection
           icon={<Ionicons name="eye" size={16} color={colors.primary} />}

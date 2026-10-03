@@ -4,44 +4,31 @@ import { useAppTheme } from '../../src/context/ThemeContext';
 import { useEcommerce } from '../../src/context/EcommerceContext';
 import { ThemedHeader } from '../../src/components/ThemedHeader';
 import { RoleBadgeSwitcher } from '../../src/components/ecommerce/RoleBadgeSwitcher';
-import { CustomerShopView } from '../../src/components/ecommerce/CustomerShopView';
+import { CustomerOrdersView } from '../../src/components/ecommerce/CustomerOrdersView';
 import { VendorDashboardView } from '../../src/components/ecommerce/VendorDashboardView';
 import { AdminDashboardView } from '../../src/components/ecommerce/AdminDashboardView';
 
-export default function MarketplaceScreen() {
+export default function OrdersScreen() {
   const { colors, t } = useAppTheme();
   const { role } = useEcommerce();
 
-  const getScreenTitle = () => {
-    switch (role) {
-      case 'vendor':
-        return t('vendorDashboard');
-      case 'admin':
-        return t('adminConsole');
-      case 'customer':
-      default:
-        return t('appTitle');
-    }
-  };
+  const title =
+    role === 'customer'
+      ? t('navOrders')
+      : role === 'vendor'
+      ? t('vendorOrdersTitle')
+      : t('platformOrdersLedgerTitle');
 
-  const getScreenSubtitle = () => {
-    switch (role) {
-      case 'vendor':
-        return 'Angkor Heritage & Tech Store • Inventory & Sales';
-      case 'admin':
-        return 'Multi-Merchant Governance & Platform Analytics';
-      case 'customer':
-      default:
-        return t('appSubtitle');
-    }
-  };
+  const subtitle =
+    role === 'customer'
+      ? 'Live delivery tracking & order records'
+      : role === 'vendor'
+      ? 'Store fulfillment queue & shipping operations'
+      : 'System-wide transactions audit & tracking';
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <ThemedHeader
-        title={getScreenTitle()}
-        subtitle={getScreenSubtitle()}
-      />
+      <ThemedHeader title={title} subtitle={subtitle} />
 
       <ScrollView
         contentContainerStyle={{
@@ -51,11 +38,9 @@ export default function MarketplaceScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Role Switcher Pill */}
         <RoleBadgeSwitcher />
 
-        {/* Dynamic Role Experience */}
-        {role === 'customer' && <CustomerShopView />}
+        {role === 'customer' && <CustomerOrdersView />}
         {role === 'vendor' && <VendorDashboardView />}
         {role === 'admin' && <AdminDashboardView />}
       </ScrollView>

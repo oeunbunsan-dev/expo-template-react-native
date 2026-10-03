@@ -28,6 +28,7 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import { ThemeProvider, useAppTheme } from '../src/context/ThemeContext';
+import { EcommerceProvider } from '../src/context/EcommerceContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -75,7 +76,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <RootNavigation />
+      <EcommerceProvider>
+        <RootNavigation />
+      </EcommerceProvider>
     </ThemeProvider>
   );
 }
