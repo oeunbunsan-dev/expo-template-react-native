@@ -16,6 +16,7 @@ import { SegmentedControl } from '../../src/components/SegmentedControl';
 import { ColorSeedPicker } from '../../src/components/ColorSeedPicker';
 import { LiveThemePreview } from '../../src/components/LiveThemePreview';
 import { RoleBadgeSwitcher } from '../../src/components/ecommerce/RoleBadgeSwitcher';
+import { UserProfileCard } from '../../src/components/auth/UserProfileCard';
 import { FONT_FAMILY_OPTIONS, FONT_WEIGHT_OPTIONS, resolveFontFamilyAndWeight } from '../../src/constants/typography';
 import { FontSizeScale, FontWeightOption, RadiusOption, ThemeId, ThemeMode } from '../../src/types/theme';
 
@@ -99,6 +100,15 @@ export default function SettingsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* User Account & Persona Section */}
+        <SettingsSection
+          icon={<Ionicons name="person-circle" size={16} color={colors.primary} />}
+          title={t('profileHeader')}
+          description="Active session, authenticated persona & account details"
+        >
+          <UserProfileCard />
+        </SettingsSection>
+
         {/* Marketplace Role Switcher Section */}
         <SettingsSection
           icon={<Ionicons name="people" size={16} color={colors.primary} />}

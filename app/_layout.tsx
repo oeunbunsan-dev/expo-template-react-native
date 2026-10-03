@@ -28,7 +28,8 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import { ThemeProvider, useAppTheme } from '../src/context/ThemeContext';
-import { EcommerceProvider } from '../src/context/EcommerceContext';
+import { EcommerceProvider, useEcommerce } from '../src/context/EcommerceContext';
+import { AuthProvider } from '../src/context/AuthContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -41,9 +42,16 @@ function RootNavigation() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="register" options={{ presentation: 'modal' }} />
       </Stack>
     </>
   );
+}
+
+function AuthWrapper({ children }: { children: React.ReactNode }) {
+  const { setRole } = useEcommerce();
+  return <AuthProvider onRoleSync={setRole}>{children}</AuthProvider>;
 }
 
 export default function RootLayout() {
@@ -77,7 +85,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <EcommerceProvider>
-        <RootNavigation />
+        <AuthWrapper>
+          <RootNavigation />
+        </AuthWrapper>
       </EcommerceProvider>
     </ThemeProvider>
   );
