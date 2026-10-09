@@ -1,5 +1,3 @@
-// src/screens/RegisterView.tsx
-import { productService } from '@/src/apis/services/product';
 import { DynamicForm, FormFieldSchema } from '@/src/components/DynamicForm';
 import { ThemedButton } from '@/src/components/ThemedButton';
 import { ThemedText } from '@/src/components/ThemedText';
@@ -9,9 +7,8 @@ import { useLoadingStore } from '@/src/stores/use-loading-store';
 import { useModalStore } from '@/src/stores/use-modal-store';
 import { NavigationBar } from 'expo-navigation-bar';
 import { useRouter } from 'expo-router';
-import { Alert, Button, Text, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { z } from 'zod';
-
 
 // 1. Define Zod validation schema
 const loginSchema = z.object({
@@ -66,27 +63,6 @@ export default function RegisterView() {
     }
   };
 
-  const handleShowModal = () => {
-    openModal(renderModalContentJSX(closeModal));
-  };
-
-  const handleSaveData = async () => {
-    startLoading("កំពុងរក្សាទុក...");
-    try {
-      const response = await productService.getAllProducts();
-
-    } catch (error: any) {
-      openModal(renderErrorModalContentJSX(closeModal));
-    } finally {
-      // dismissLoading();
-    }
-  };
-
-  const handleRedirect = () => {
-    router.push("/(customer)/wishlist");
-  };
-
-
   return (
     <View
       style={{
@@ -118,31 +94,6 @@ export default function RegisterView() {
         size="md"
         onPress={() => router.push('/register-vendor' as any)}
       />
-
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Button title="បើកប្រអប់សកល" onPress={handleShowModal} />
-        <Button title="Save Data" onPress={handleRedirect} />
-      </View>
     </View>
   );
 };
-
-const renderModalContentJSX = (closeModal: any) => {
-  return <>
-    <View style={{ alignItems: 'center' }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>ការជូនដំណឹង</Text>
-      <Text style={{ marginVertical: 12 }}>តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?</Text>
-      <Button title="បិទ" onPress={closeModal} />
-    </View>
-  </>
-};
-
-const renderErrorModalContentJSX = (closeModal: any) => {
-  return <>
-    <View style={{ alignItems: 'center' }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>ការជូនដំណឹង</Text>
-      <Text style={{ marginVertical: 12 }}>តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?</Text>
-      <Button title="បិទ" onPress={closeModal} />
-    </View>
-  </>
-}
