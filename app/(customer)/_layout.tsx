@@ -1,7 +1,13 @@
-import { Slot } from "expo-router"
+import { Stack } from 'expo-router';
+import React from 'react';
 
-const _layout = ({ children }: any) => {
-  return <Slot />
+export default function CustomerLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="product/[slug]" />
+      <Stack.Screen name="wishlist" />
+      <Stack.Screen name="store/[slug]" />
+    </Stack>
+  );
 }
-
-export default _layout

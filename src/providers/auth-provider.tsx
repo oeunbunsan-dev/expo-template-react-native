@@ -24,6 +24,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  const fetchProfile = async () => {
+    try {
+      const res = await authService.getProfile();
+      setUser(res);
+      return res;
+    } catch (error) {
+      console.error('Fetch profile error:', error);
+      return null;
+    }
+  };
+
   // Load persisted session token and user data on initialization
   useEffect(() => {
     async function loadAuthState() {
@@ -32,12 +43,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const token = await tokenStorage.getAccessToken();
 
         if (Boolean(token)) {
-          fetchProfile();
-          setIsAuthenticated(true);
+          const profile = await fetchProfile();
+          if (profile) {
+            setIsAuthenticated(true);
+          } else {
+            await tokenStorage.clearTokens();
+            setIsAuthenticated(false);
+            setUser(null);
+          }
         } else {
           setIsAuthenticated(false);
+          setUser(null);
         }
-      } catch (error) {
+      } catch {
+        setIsAuthenticated(false);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -51,7 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return res;
   };
 
-
   const signUpVendor = async (credential: any) => {
     const res = await authService.registerVendor(credential);
     return res;
@@ -59,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (credential: any) => {
     const res = await authService.login(credential);
-    fetchProfile();
+    await fetchProfile();
     setIsAuthenticated(true);
     return res;
   };
@@ -76,11 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   };
-
-  const fetchProfile = async () => {
-    const res = await authService.getProfile();
-    setUser(res);
-  }
 
   return (
     <AuthContext.Provider value={{ user, isLoading, signUp, signUpVendor, signIn, signOut, fetchProfile, isAuthenticated }}>

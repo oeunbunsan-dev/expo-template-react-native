@@ -97,9 +97,17 @@ apiCore.interceptors.response.use(
       }
     }
 
-    // Return the (Actual Error Message) that sent from Backend API
-    const apiError = error || "No response from server"
-    console.log(apiError)
+    // Return the (Actual Error Message) sent from Backend API
+    const errorData = error.response?.data;
+    const detailSummary = errorData?.error?.details?.[0]?.summary || errorData?.error?.details?.[0]?.message;
+    const apiError =
+      detailSummary ||
+      errorData?.error?.message ||
+      errorData?.message ||
+      error?.message ||
+      "No response from server";
+
+    console.log('API Error:', apiError);
 
     return Promise.reject(new Error(apiError));
   }

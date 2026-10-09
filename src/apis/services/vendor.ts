@@ -1,7 +1,7 @@
 import { apiCore } from "../core";
 
 class VendorService {
-  listVendorProducts = async (params: any) => {
+  listVendorProducts = async (params ? : any) => {
     const res = await apiCore.get("/vendor/products", { params });
     return res.data;
   };
@@ -19,7 +19,17 @@ class VendorService {
   deleteVendorProduct = async (id: any) => {
     const res = await apiCore.delete("/vendor/products/" + id);
     return res.data;
-  }
+  };
+
+  getVendorDashboardOverview = async () => {
+    const res = await apiCore.get("/vendor/dashboard");
+    return res.data;
+  };
+
+  getVendorProfile = async () => {
+    const res = await apiCore.get("/vendor/profile");
+    return res.data;
+  };
 };
 
 export const vendorService = new VendorService();

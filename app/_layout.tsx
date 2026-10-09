@@ -29,53 +29,58 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider, useAppTheme } from '../src/context/ThemeContext';
 import { AuthProvider, useAuth } from '../src/providers/auth-provider';
 
-
 SplashScreen.preventAutoHideAsync().catch(() => { });
 
 function App() {
-  const { isDark } = useAppTheme();
+  const { colors } = useAppTheme();
   const { isAuthenticated, isLoading, user } = useAuth();
-  const currentRole = user?.data?.role;
 
+  // Normalize role from authenticated profile: CUSTOMER | VENDOR | ADMIN
+  const currentRole = user?.data?.role ? String(user.data.role).toUpperCase() : null;
 
-  console.log("CUrrent role : " + currentRole)
-
-  if (isLoading) {
-    return <ActivityIndicator />
+  if (isLoading || (isAuthenticated && !currentRole)) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
+  const isVendor = isAuthenticated && currentRole === 'VENDOR';
+  const isAdmin = isAuthenticated && currentRole === 'ADMIN';
+  const isCustomer = isAuthenticated && !isVendor && !isAdmin;
+
   return (
-    <>
-      <Stack screenOptions={{ headerShown: false }}>
-        {/* Public Routes */}
-        <Stack.Protected guard={!isAuthenticated}>
-          <Stack.Screen name="(auth)/login" />
-          <Stack.Screen name="(auth)/register" />
-        </Stack.Protected>
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* Public Routes for Unauthenticated */}
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
 
-        {/* Protected Routes for Customer role only */}
-        <Stack.Protected guard={isAuthenticated && (currentRole === "CUSTOMER")}>
-          <Stack.Screen name="(tabs)/index" />
-          <Stack.Screen name="(tabs)/profile" />
-          <Stack.Screen name="(tabs)/settings" />
-          <Stack.Screen name="(tabs)/showcase" />
-        </Stack.Protected>
+      {/* Protected Routes for Customer role */}
+      <Stack.Protected guard={isCustomer}>
+        <Stack.Screen name="(customer)" />
+      </Stack.Protected>
 
-        {/* Protected Routes for Vendor role only */}
-        <Stack.Protected guard={isAuthenticated && (currentRole === "VENDOR")}>
-          <Stack.Screen name="(vendor)/home" />
-          <Stack.Screen name="(vendor)/store" />
-        </Stack.Protected>
-      </Stack>
-    </>
+      {/* Protected Routes for Vendor role */}
+      <Stack.Protected guard={isVendor}>
+        <Stack.Screen name="(vendor)" />
+      </Stack.Protected>
+
+      {/* Protected Routes for Admin role */}
+      <Stack.Protected guard={isAdmin}>
+        <Stack.Screen name="(admin)" />
+      </Stack.Protected>
+
+      <Stack.Screen name="+not-found" />
+    </Stack>
   );
-}
-
+};
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -103,7 +108,7 @@ export default function RootLayout() {
 
   if (!fontsLoaded && !fontError) {
     return null;
-  }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
@@ -111,11 +116,11 @@ export default function RootLayout() {
       <NavigationBar style="dark" />
       <ThemeProvider>
         <AuthProvider>
-          <App />
-          <CusModal />
-          <CusLoading />
+            <App />
+            <CusModal />
+            <CusLoading />
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaView>
   );
-}
+};

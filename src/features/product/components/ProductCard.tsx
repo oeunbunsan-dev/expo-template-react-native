@@ -1,3 +1,5 @@
+import { useWishlistStore } from '@/src/stores/use-wishlist-store';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
   Dimensions,
@@ -54,9 +56,11 @@ const ProductCart: React.FC<ProductCartProps> = ({
   onPressProduct,
   onAddToCart,
 }) => {
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
   if (!productObj) return null;
 
   const {
+    id,
     name,
     basePrice,
     comparePrice,
@@ -67,6 +71,8 @@ const ProductCart: React.FC<ProductCartProps> = ({
     inventory,
     isFeatured,
   } = productObj;
+
+  const isFavorited = isInWishlist(id);
 
   // Determine cover image (or fallback to the first image)
   const coverImage = images?.find((img) => img.isCover)?.url || images?.[0]?.url;
@@ -102,6 +108,19 @@ const ProductCart: React.FC<ProductCartProps> = ({
             <Text style={styles.placeholderText}>No Image</Text>
           </View>
         )}
+
+        {/* Favorite Heart Button */}
+        <TouchableOpacity
+          onPress={() => toggleWishlist(id)}
+          style={styles.favoriteButton}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name={isFavorited ? 'heart' : 'heart-outline'}
+            size={18}
+            color={isFavorited ? '#EF4444' : '#6B7280'}
+          />
+        </TouchableOpacity>
 
         {/* Featured / Discount Badges */}
         <View style={styles.badgeColumn}>
@@ -215,6 +234,23 @@ const styles = StyleSheet.create({
     top: 8,
     left: 8,
     gap: 4,
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
+    zIndex: 10,
   },
   discountBadge: {
     backgroundColor: '#DC2626',

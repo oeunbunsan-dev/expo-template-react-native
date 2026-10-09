@@ -3,11 +3,11 @@ import { View } from 'react-native';
 import Profile from '../components/Profile';
 
 const ProfileView = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   return (
     <View style={{ flex : 1 }}>
-      {user && <Profile profileObj={user.data} />}
+      {user && <Profile profileObj={user.data} onLogout={signOut} />}
     </View>
   )
 }

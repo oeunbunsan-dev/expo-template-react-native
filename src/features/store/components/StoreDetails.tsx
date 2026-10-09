@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Dimensions,
   Image,
   Linking,
   StyleSheet,
@@ -8,8 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-const { width } = Dimensions.get('window');
 
 // --- TypeScript Definitions ---
 export interface Vendor {
