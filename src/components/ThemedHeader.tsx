@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import { View, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
 import { ThemedText } from './ThemedText';
-import { AuthModal } from './auth/AuthModal';
 
 export interface ThemedHeaderProps {
   title: string;
@@ -20,7 +18,6 @@ export const ThemedHeader: React.FC<ThemedHeaderProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const { colors, language, setLanguage, mode, setMode, isDark, borderRadius } = useAppTheme();
-  const { user, isAuthenticated } = useAuth();
   const [authVisible, setAuthVisible] = useState(false);
 
   const toggleLanguage = () => {
@@ -116,40 +113,13 @@ export const ThemedHeader: React.FC<ThemedHeaderProps> = ({
               />
             </Pressable>
 
-            {/* Auth / Profile Avatar Button */}
-            <Pressable
-              onPress={() => setAuthVisible(true)}
-              style={({ pressed }) => [
-                {
-                  width: 36,
-                  height: 36,
-                  borderRadius: Math.min(borderRadius, 18),
-                  backgroundColor: isAuthenticated && user ? user.avatarColor : colors.primaryContainer,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 1.5,
-                  borderColor: colors.cardBorder,
-                  opacity: pressed ? 0.8 : 1,
-                },
-              ]}
-              accessibilityLabel="Open user authentication profile"
-            >
-              {isAuthenticated && user ? (
-                <ThemedText variant="sm" weight="700" style={{ color: '#FFFFFF' }}>
-                  {user.avatarInitial}
-                </ThemedText>
-              ) : (
-                <Ionicons name="person-outline" size={18} color={colors.primary} />
-              )}
-            </Pressable>
+
 
             {rightAction}
           </View>
         </View>
       </View>
 
-      {/* Embedded Auth Sheet */}
-      <AuthModal visible={authVisible} onClose={() => setAuthVisible(false)} />
     </>
   );
 };

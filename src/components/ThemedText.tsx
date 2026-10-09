@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TextProps, TextStyle } from 'react-native';
-import { useAppTheme } from '../context/ThemeContext';
 import { resolveFontFamilyAndWeight } from '../constants/typography';
+import { useAppTheme } from '../context/ThemeContext';
 import { FontWeightOption } from '../types/theme';
 
 export type TextVariant = 'hero' | 'headline' | 'subtitle' | 'title' | 'body' | 'sm' | 'caption';
@@ -45,7 +45,7 @@ export const ThemedText: React.FC<ThemedTextProps> = ({
       break;
     case 'title':
       size = fontSize.title;
-      lineHeight = Math.round(fontSize.title * 1.35);
+      lineHeight = Math.round(fontSize.title * 1.5);
       break;
     case 'body':
       size = fontSize.body;

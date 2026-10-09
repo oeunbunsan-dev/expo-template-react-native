@@ -1,13 +1,12 @@
 {
   "expo": {
     "name": "Modern Commerce",
-    "slug": "modern-commerce",
+    "slug": "theme-sdk-54",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "moderncommerce",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
@@ -18,7 +17,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.bunsan.moderncommerce"
     },
@@ -38,6 +36,18 @@
           "dark": {
             "backgroundColor": "#0B0F17"
           }
+        }
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser",
+       [
+        "expo-navigation-bar",
+        {
+          "enforceContrast": true,
+          "hidden": false,
+          "style": "light"
         }
       ]
     ],

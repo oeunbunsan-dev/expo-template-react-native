@@ -1,25 +1,9 @@
-import React, { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import {
-  useFonts,
-  KantumruyPro_300Light,
-  KantumruyPro_400Regular,
-  KantumruyPro_500Medium,
-  KantumruyPro_600SemiBold,
-  KantumruyPro_700Bold,
-} from '@expo-google-fonts/kantumruy-pro';
+import CusLoading from '@/src/components/custom/CusLoading';
+import CusModal from '@/src/components/custom/CusModal';
 import {
   Battambang_400Regular,
   Battambang_700Bold,
 } from '@expo-google-fonts/battambang';
-import {
-  Moul_400Regular,
-} from '@expo-google-fonts/moul';
-import {
-  KdamThmorPro_400Regular,
-} from '@expo-google-fonts/kdam-thmor-pro';
 import {
   Inter_300Light,
   Inter_400Regular,
@@ -27,32 +11,71 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
+import {
+  KantumruyPro_300Light,
+  KantumruyPro_400Regular,
+  KantumruyPro_500Medium,
+  KantumruyPro_600SemiBold,
+  KantumruyPro_700Bold,
+  useFonts,
+} from '@expo-google-fonts/kantumruy-pro';
+import {
+  KdamThmorPro_400Regular,
+} from '@expo-google-fonts/kdam-thmor-pro';
+import {
+  Moul_400Regular,
+} from '@expo-google-fonts/moul';
+import { NavigationBar } from 'expo-navigation-bar';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider, useAppTheme } from '../src/context/ThemeContext';
-import { EcommerceProvider, useEcommerce } from '../src/context/EcommerceContext';
-import { AuthProvider } from '../src/context/AuthContext';
+import { AuthProvider, useAuth } from '../src/providers/auth-provider';
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
 
-function RootNavigation() {
+SplashScreen.preventAutoHideAsync().catch(() => { });
+
+function App() {
   const { isDark } = useAppTheme();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const currentRole = user?.data?.role;
+
+
+  console.log("CUrrent role : " + currentRole)
+
+  if (isLoading) {
+    return <ActivityIndicator />
+  }
 
   return (
     <>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="register" options={{ presentation: 'modal' }} />
+        {/* Public Routes */}
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="(auth)/login" />
+          <Stack.Screen name="(auth)/register" />
+        </Stack.Protected>
+
+        {/* Protected Routes for Customer role only */}
+        <Stack.Protected guard={isAuthenticated && (currentRole === "CUSTOMER")}>
+          <Stack.Screen name="(tabs)/index" />
+          <Stack.Screen name="(tabs)/profile" />
+          <Stack.Screen name="(tabs)/settings" />
+          <Stack.Screen name="(tabs)/showcase" />
+        </Stack.Protected>
+
+        {/* Protected Routes for Vendor role only */}
+        <Stack.Protected guard={isAuthenticated && (currentRole === "VENDOR")}>
+          <Stack.Screen name="(vendor)/home" />
+          <Stack.Screen name="(vendor)/store" />
+        </Stack.Protected>
       </Stack>
     </>
   );
 }
 
-function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { setRole } = useEcommerce();
-  return <AuthProvider onRoleSync={setRole}>{children}</AuthProvider>;
-}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -74,7 +97,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync().catch(() => {});
+      SplashScreen.hideAsync().catch(() => { });
     }
   }, [fontsLoaded, fontError]);
 
@@ -83,12 +106,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <EcommerceProvider>
-        <AuthWrapper>
-          <RootNavigation />
-        </AuthWrapper>
-      </EcommerceProvider>
-    </ThemeProvider>
+    <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+      {/* Set the navigation bar style */}
+      <NavigationBar style="dark" />
+      <ThemeProvider>
+        <AuthProvider>
+          <App />
+          <CusModal />
+          <CusLoading />
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaView>
   );
 }

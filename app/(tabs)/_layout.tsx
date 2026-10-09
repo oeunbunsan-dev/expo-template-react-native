@@ -1,16 +1,13 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../src/context/ThemeContext';
-import { useEcommerce } from '../../src/context/EcommerceContext';
 
 export default function TabLayout() {
   const { colors, t } = useAppTheme();
-  const { role, cartCount } = useEcommerce();
   const insets = useSafeAreaInsets();
 
-  const getFirstTabTitle = () => {
+  const getFirstTabTitleOld = () => {
     switch (role) {
       case 'vendor':
         return t('navManage');
@@ -22,7 +19,7 @@ export default function TabLayout() {
     }
   };
 
-  const getFirstTabIcon = (focused: boolean) => {
+  const getFirstTabIconOld = (focused: boolean) => {
     switch (role) {
       case 'vendor':
         return focused ? 'storefront' : 'storefront-outline';
@@ -34,7 +31,7 @@ export default function TabLayout() {
     }
   };
 
-  const getSecondTabTitle = () => {
+  const getSecondTabTitleOld = () => {
     switch (role) {
       case 'vendor':
         return 'Orders & Stock';
@@ -69,10 +66,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: getFirstTabTitle(),
+          title: "getFirstTabTitle()",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={getFirstTabIcon(focused) as any}
               size={22}
               color={color}
             />
@@ -82,8 +78,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="orders"
         options={{
-          title: getSecondTabTitle(),
-          tabBarBadge: role === 'customer' && cartCount > 0 ? cartCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: '#EF4444',
             fontSize: 10,
@@ -91,19 +85,6 @@ export default function TabLayout() {
           },
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={
-                role === 'vendor'
-                  ? focused
-                    ? 'cube'
-                    : 'cube-outline'
-                  : role === 'admin'
-                  ? focused
-                    ? 'file-tray-full'
-                    : 'file-tray-full-outline'
-                  : focused
-                  ? 'receipt'
-                  : 'receipt-outline'
-              }
               size={22}
               color={color}
             />
