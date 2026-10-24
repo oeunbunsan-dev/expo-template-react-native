@@ -1,10 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import {
-  Modal,
-  ScrollView,
-  View,
-} from 'react-native';
 import { ColorSeedPicker } from '@/src/components/ColorSeedPicker';
 import { LiveThemePreview } from '@/src/components/LiveThemePreview';
 import { SegmentedControl } from '@/src/components/SegmentedControl';
@@ -16,6 +9,13 @@ import { ThemedText } from '@/src/components/ThemedText';
 import { FONT_FAMILY_OPTIONS, FONT_WEIGHT_OPTIONS, resolveFontFamilyAndWeight } from '@/src/constants/typography';
 import { useAppTheme } from '@/src/context/ThemeContext';
 import { FontSizeScale, FontWeightOption, RadiusOption, ThemeId, ThemeMode } from '@/src/types/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
+import {
+  Modal,
+  ScrollView,
+  View,
+} from 'react-native';
 
 export default function SettingsView() {
   const {
@@ -41,6 +41,7 @@ export default function SettingsView() {
   } = useAppTheme();
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const
 
   // 5 Themes metadata
   const themeList: { id: ThemeId; nameKey: string; descKey: string; lightBg: string; darkBg: string }[] = [
